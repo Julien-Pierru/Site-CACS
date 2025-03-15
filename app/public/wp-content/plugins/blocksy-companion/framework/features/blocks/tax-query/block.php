@@ -56,6 +56,10 @@ class TaxQuery {
 			BLOCKSY_PATH . '/static/js/editor/blocks/tax-query/block.json',
 			[
 				'render_callback' => function ($attributes, $content, $block) {
+					$border_result = get_block_core_post_featured_image_border_attributes(
+						$attributes
+					);
+
 					if (strpos($content, 'wp-block-blocksy-tax-query"></div>') !== false) {
 						return '';
 					}
@@ -73,6 +77,17 @@ class TaxQuery {
 							'data-id',
 							$attributes['uniqueId']
 						);
+
+						if (! empty($border_result['class'])) {
+							$block_reader->add_class($border_result['class']);
+						}
+
+						if (! empty($border_result['style'])) {
+							$block_reader->set_attribute(
+								'style',
+								$border_result['style'] . $block_reader->get_attribute('style')
+							);
+						}
 					}
 
 					return $block_reader->get_updated_html();
@@ -283,6 +298,7 @@ class TaxQuery {
 							'has_slideshow_arrows' => 'yes',
 							'has_slideshow_autoplay' => 'no',
 							'has_slideshow_autoplay_speed' => 3,
+							'hide_empty' => 'yes',
 						]
 					);
 
@@ -301,7 +317,7 @@ class TaxQuery {
 
 						$all_terms = get_terms([
 							'taxonomy' => $term_obj->taxonomy,
-							'hide_empty' => false,
+							'hide_empty' => $context['hide_empty'] === 'yes',
 							'include' => [$term_obj->term_id]
 						]);
 
@@ -427,7 +443,7 @@ class TaxQuery {
 				];
 
 				foreach ($tax_block_patterns as $tax_block_pattern) {
-					$pattern_data = blocksy_get_variables_from_file(
+					$pattern_data = blc_theme_functions()->blocksy_get_variables_from_file(
 						__DIR__ . '/block-patterns/' . $tax_block_pattern . '.php',
 						['pattern' => []]
 					);
@@ -492,6 +508,7 @@ class TaxQuery {
 				// all | parent | relevant
 				'level' => 'all',
 				'limit' => 5,
+				'hide_empty' => 'yes',
 				'offset' => 0,
 				'orderby' => 'none',
 				'order' =>  'desc',
@@ -559,7 +576,8 @@ class TaxQuery {
 			'orderby' => $attributes['orderby'],
 			'order' => $attributes['order'],
 			'offset' => $attributes['offset'],
-			'number' => $attributes['limit']
+			'number' => $attributes['limit'],
+			'hide_empty' => $attributes['hide_empty'] === 'yes',
 		];
 
 		if (

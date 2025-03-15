@@ -1,3 +1,48 @@
+2.0.92: 2025-03-13
+- Improvement: Add pagination options for search archive
+- Improvement: Add product name to the product gallery images as a fallback for accessibility reasons
+- Improvement: Added off-canvas offset option
+- Improvement: Better output for off-canvas panel width on small devices
+- Improvement: Safer generation of the responsive classes in customizer to avoid issues in some certain situations
+- Fix: Related Posts - make sure bottom spacing is applied properly on all elements
+
+2.0.91: 2025-02-27
+- Improvement: Better check for responsive customizer previewed device in options from post meta
+- Improvement: Better integration between LiteSpeed and responsive desktop menu functionality
+- Improvement: Make sure label for the search header element is translatable
+- Improvement: Media attachment description better formatting
+- Improvement: New lines are ignored in manually entered excerpts
+- Improvement: Properly output footer row grid styles on tablet and mobile devices
+- Improvement: Safer management of react root
+- Fix: Fix widgets error when WooCommerce 9.7.0 is active
+- Fix: Form elements typography - make sure "Font Weight" option works fine even if the font is set to default value
+- Fix: WooCommerce checkout page - fix coupon code input height when buttons have a big padding
+- Fix: WooCommerce default gallery - make sure lightbox assets are correctly loaded on mobile devices
+
+2.0.90: 2025-02-21
+- Improvement: Better detection of full page selective refresh in Customizer
+- Improvement: CPT archives don't get customizer styles correctly
+- Improvement: Correctly un-mount components in Customizer options for new React 18 version
+- Improvement: Flexy slider dynamic height calculation take border into consideration
+
+2.0.89: 2025-02-20
+- Improvement: General fixes and improvements
+
+2.0.88: 2025-02-20
+- Improvement: Add option to change the sticky header slide down and fade effect animation speed
+- Improvement: Color palettes - add possibility to rename colors
+- Improvement: Correctly mount components root for React 18
+- Improvement: Customizer import - make sure the CSS file gents generated properly
+- Improvement: Ensure page with non existing taxonomy is treated as a regular 404 page
+- Improvement: Ensure wp-edit-post script doesn't get loaded in the Widgets or Customizer screens to avoid issues with widgets editor
+- Improvement: Media attachment pages - make sure description HTML formatting is correctly applied
+- Improvement: Single product gallery - make sure the "zoom effect" works properly when Dokan plugin is active
+- Fix: Header menu - make sure "Stretch Menu" option works fine in combination with "Collapse Non Fitting Items" option
+
+2.0.87: 2025-02-06
+- Fix: Live Search shows featured images on posts that do not have a featured image
+- Fix: Single product gallery thumbnails require a double tap the first time the page is loaded on mobile
+
 2.0.86: 2025-01-27
 - Improvement: Search module - better logic for subtype in Rest API
 

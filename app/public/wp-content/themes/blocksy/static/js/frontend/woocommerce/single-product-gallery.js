@@ -175,6 +175,17 @@ export const mount = (el, { event: mountEvent }) => {
 	}
 
 	const renderPhotoswipe = ({ onlyZoom = false } = {}) => {
+		let isZoomEnabledInCustomizer = true
+
+		if (
+			window.wp &&
+			wp.customize &&
+			wp.customize('has_product_single_zoom')
+		) {
+			isZoomEnabledInCustomizer =
+				wp.customize('has_product_single_zoom')() === 'yes'
+		}
+
 		let maybeTrigger = [
 			...document.querySelectorAll(
 				'.woocommerce-product-gallery .woocommerce-product-gallery__trigger'
@@ -189,13 +200,7 @@ export const mount = (el, { event: mountEvent }) => {
 			.filter((el) => !el.closest('.flexy-pills'))
 			.map((el) => {
 				if (
-					((window.wp &&
-						wp.customize &&
-						wp.customize('has_product_single_lightbox') &&
-						wp.customize('has_product_single_lightbox')() ===
-							'yes') ||
-						!window.wp ||
-						!window.wp.customize) &&
+					isZoomEnabledInCustomizer &&
 					!onlyZoom &&
 					!el.matches('[data-media-id]')
 				) {
@@ -233,15 +238,7 @@ export const mount = (el, { event: mountEvent }) => {
 				}
 
 				if ($.fn.zoom) {
-					if (
-						(window.wp &&
-							wp.customize &&
-							wp.customize('has_product_single_zoom') &&
-							wp.customize('has_product_single_zoom')() ===
-								'yes') ||
-						!window.wp ||
-						!window.wp.customize
-					) {
+					if (isZoomEnabledInCustomizer) {
 						const rect = el.getBoundingClientRect()
 
 						if (el.closest('.elementor-section-wrap')) {
@@ -288,14 +285,7 @@ export const mount = (el, { event: mountEvent }) => {
 			})
 
 		if ($.fn.zoom) {
-			if (
-				(window.wp &&
-					wp.customize &&
-					wp.customize('has_product_single_zoom') &&
-					wp.customize('has_product_single_zoom')() === 'yes') ||
-				!window.wp ||
-				!window.wp.customize
-			) {
+			if (isZoomEnabledInCustomizer) {
 				setTimeout(() => {
 					if (!mountEvent) {
 						return
@@ -425,11 +415,11 @@ export const mount = (el, { event: mountEvent }) => {
 
 				if (
 					document.querySelector(
-						'.single-product .flexy-items .ct-media-container'
+						'.single-product .product .flexy-items .ct-media-container'
 					)
 				) {
 					let pills = document.querySelector(
-						'.single-product .flexy-pills'
+						'.single-product .product .flexy-pills'
 					)
 
 					let activeIndex = Array.from(
@@ -442,7 +432,7 @@ export const mount = (el, { event: mountEvent }) => {
 					if (isGalleryEnabled) {
 						openPhotoswipeFor(
 							document.querySelector(
-								'.single-product .flexy-items'
+								'.single-product .product .flexy-items'
 							).children[activeIndex].firstElementChild,
 
 							activeIndex
@@ -456,7 +446,12 @@ export const mount = (el, { event: mountEvent }) => {
 	if (mountEvent) {
 		if (mountEvent.type === 'click') {
 			setTimeout(() => {
-				if (mountEvent.target && mountEvent.target.click) {
+				if (
+					mountEvent.target &&
+					mountEvent.target.click &&
+					// Propagate click only into the main gallery, not the pills.
+					!mountEvent.target.closest('.flexy-pills')
+				) {
 					mountEvent.target.dispatchEvent(mountEvent)
 				}
 			}, 100)

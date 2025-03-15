@@ -27,6 +27,7 @@ export const menuEntryPoints = [
 			),
 		],
 		load: () => import('../header/responsive-desktop-menu'),
+		events: ['ct:header:responsive-menu:refresh'],
 		condition: () => {
 			if (getCurrentScreen() !== 'desktop') {
 				return false
@@ -52,23 +53,31 @@ export const menuEntryPoints = [
 					.filter((el) => {
 						const elRect = el.getBoundingClientRect()
 
-						const intersectsLeftEdge =
-							elRect.left < menuRect.left &&
-							elRect.right > menuRect.left
+						return [
+							menuRect,
 
-						const intersectsRightEdge =
-							elRect.right > menuRect.right &&
-							elRect.left < menuRect.right
+							...[...menu.firstElementChild.children].map(
+								(child) => child.getBoundingClientRect()
+							),
+						].some((rect) => {
+							const intersectsLeftEdge =
+								elRect.left < rect.left &&
+								elRect.right > rect.left
 
-						const isInside =
-							elRect.left > menuRect.left &&
-							elRect.right < menuRect.right
+							const intersectsRightEdge =
+								elRect.right > rect.right &&
+								elRect.left < rect.right
 
-						return (
-							intersectsLeftEdge ||
-							intersectsRightEdge ||
-							isInside
-						)
+							const isInside =
+								elRect.left > rect.left &&
+								elRect.right < rect.right
+
+							return (
+								intersectsLeftEdge ||
+								intersectsRightEdge ||
+								isInside
+							)
+						})
 					})
 
 				const parentRect = menu.parentElement.getBoundingClientRect()

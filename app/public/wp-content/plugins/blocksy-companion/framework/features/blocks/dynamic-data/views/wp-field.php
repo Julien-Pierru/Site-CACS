@@ -30,6 +30,17 @@ if ($field === 'wp:archive_title') {
 			$value = get_the_title($post_id);
 		}
 	}
+
+	if (is_search()) {
+		$value = blocksy_safe_sprintf(
+			// translators: 1: the search query
+			__(
+				'Search Results for %1$s',
+				'blocksy-companion'
+			),
+			get_search_query()
+		);
+	}
 }
 
 if ($field === 'wp:archive_description') {
@@ -107,7 +118,7 @@ if ($field === 'wp:term_count') {
 	global $blocksy_term_obj;
 
 	if (! empty($blocksy_term_obj)) {
-		$value = $blocksy_term_obj->count;
+		$value = "{$blocksy_term_obj->count}";
 
 		if ($has_field_link) {
 			$link_attr = [
@@ -378,7 +389,11 @@ if ($field === 'wp:terms') {
 	}
 }
 
-if (empty(trim($value))) {
+if (
+	empty(trim($value))
+	&&
+	trim($value) !== '0'
+) {
 	return;
 }
 

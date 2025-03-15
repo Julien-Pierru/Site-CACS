@@ -1,9 +1,5 @@
 import './public-path'
-import {
-	createElement,
-	render,
-	unmountComponentAtNode,
-} from '@wordpress/element'
+import { createElement, createRoot } from '@wordpress/element'
 import { defineCustomizerControl } from './controls/utils.js'
 import { listenToChanges } from './customizer-color-scheme.js'
 import './preview-events'
@@ -21,6 +17,9 @@ import ctEvents from 'ct-events'
 import ProOverlay from './components/ProOverlay'
 
 import WidgetArea from './options/ct-widget-area'
+import { mountCoreBlocksFix } from '../editor/utils/fix-core-blocks-registration'
+
+mountCoreBlocksFix()
 
 ctEvents.on('blocksy:options:register', (opts) => {
 	opts['ct-widget-area'] = WidgetArea
@@ -51,14 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	setTimeout(() => {
 		if (document.querySelector('.ct-onboarding-button')) {
-			render(
+			const root = createRoot(
+				document.querySelector('.ct-onboarding-button')
+			)
+			root.render(
 				<ProOverlay
 					username={
 						document.querySelector('.ct-onboarding-button button')
 							.dataset.username
 					}
-				/>,
-				document.querySelector('.ct-onboarding-button')
+				/>
 			)
 		}
 	}, 50)
@@ -93,6 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
 					? wp.customize.panel
 					: wp.customize.section)(control.section(), (section) => {
 					section.expanded.bind((value) => {
+						let root = control.container[0].__reactRoot
+
+						if (!root) {
+							control.container[0].__reactRoot = createRoot(
+								control.container[0]
+							)
+							root = control.container[0].__reactRoot
+						}
+
 						if (value) {
 							const ChildComponent = Options
 
@@ -101,23 +111,23 @@ document.addEventListener('DOMContentLoaded', () => {
 							// block | inline
 							let design = 'none'
 
-							render(
+							root.render(
 								<MyChildComponent
 									id={control.id}
 									onChange={(v) => control.setting.set(v)}
 									value={control.setting.get()}
 									option={control.params.option}>
 									{(props) => <ChildComponent {...props} />}
-								</MyChildComponent>,
-
-								control.container[0]
+								</MyChildComponent>
 							)
 
 							return
 						}
 
 						setTimeout(() => {
-							unmountComponentAtNode(control.container[0])
+							root.unmount()
+
+							control.container[0].__reactRoot = null
 						}, 500)
 					})
 				})

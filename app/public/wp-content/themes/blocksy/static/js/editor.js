@@ -189,20 +189,36 @@ const BlocksyOptions = ({ name, value, options, onChange, isActive }) => {
 										})
 										setValues(futureValue)
 									}}
-									onChangeMultiple={(nextValues) => {
+									onChangeMultiple={(
+										nextValues,
+										args = {}
+									) => {
 										// At the moment onChangeMultiple doesnt trigger
 										// updates in the dynamic styles, because we need to adapt
 										// handleMetaboxValueChange to handle multiple values
 										// correctly.
 										// For now this is not needed.
 
-										const futureValue = {
-											...(values ||
-												getValueFromInput(
-													options,
-													value || {}
-												)),
-											...nextValues,
+										args = {
+											deleteNonExistent: false,
+											...args,
+										}
+
+										let futureValue = null
+
+										if (args.deleteNonExistent) {
+											futureValue = {
+												...nextValues,
+											}
+										} else {
+											futureValue = {
+												...(values ||
+													getValueFromInput(
+														options,
+														value || {}
+													)),
+												...nextValues,
+											}
 										}
 
 										onChange(futureValue)

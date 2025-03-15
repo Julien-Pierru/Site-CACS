@@ -1,11 +1,11 @@
 === Blocksy Companion ===
 Tags: widget, widgets
-Requires at least: 5.2
+Requires at least: 6.5
 Requires PHP: 7.0
 Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.0.86
+Stable tag: 2.0.92
 
 == Description ==
 
@@ -52,6 +52,34 @@ Program. The Patchstack team help validate, triage and handle any security
 vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/blocksy-companion)
 
 == Changelog ==
+2.0.92: 2025-03-13
+- Improvement: Account drop down custom link url string support
+- Improvement: Account header element - bring back the tablet/mobile dropdown functionality only for main header rows
+- Improvement: Mare sure Product Reviews archive star rating respect the horizontal alignment option
+- Improvement: Safer calling of theme functions in the companion plugin
+- Fix: Multiple Advanced Posts blocks on a single page, scoped by category, load incorrect posts when using pagination
+
+2.0.91: 2025-02-27
+- Improvement: Ability to change the order of first & last name in the account header element drop down
+- Improvement: Better integration with WPMobile app plugin
+- Improvement: Starter sites importer proper check for DOM PHP extension presence
+
+2.0.90: 2025-02-21
+- Improvement: General fixes and improvements
+
+2.0.89: 2025-02-20
+- Improvement: Properly check for is_account_page in account modal
+
+2.0.88: 2025-02-20
+- Improvement: Account element - add link option for mobile devices
+- Improvement: Account element - correctly positioned dropdown menus
+- Improvement: Advanced Taxonomies block - add option to hide/show empty taxonomies
+- Improvement: Correctly mount components root for React 18
+- Improvement: Product Reviews extension - archive rating formatting issue
+
+2.0.87: 2025-02-06
+- Improvement: General fixes and improvements
+
 2.0.86: 2025-01-27
 - Improvement: Newsletter Subscribe - Better handling of Custom List ID in the newsletter subscribe block
 

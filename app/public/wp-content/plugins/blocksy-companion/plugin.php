@@ -36,7 +36,7 @@ class Plugin {
 
 	private $is_blocksy = '__NOT_SET__';
 	public $is_blocksy_data = null;
-	private $desired_blocksy_version = '2.0.79-beta1';
+	private $desired_blocksy_version = '2.0.87-beta1';
 
 	private $request_uri = '';
 
@@ -179,6 +179,7 @@ class Plugin {
 	 */
 	private function __construct() {
 		require_once BLOCKSY_PATH . '/framework/helpers/request.php';
+		require_once BLOCKSY_PATH . '/framework/helpers/theme-functions.php';
 		require_once BLOCKSY_PATH . '/framework/helpers/helpers.php';
 		require_once BLOCKSY_PATH . '/framework/helpers/exts.php';
 
@@ -278,6 +279,29 @@ class Plugin {
 					strpos($_SERVER['REQUEST_URI'], 'customize.php') !== false
 				) {
 					$maybe_foreign_theme = $_REQUEST['theme'];
+				}
+
+				$is_wpappninja = isset($_REQUEST['wpappninja']);
+
+				if (
+					isset($_SERVER['HTTP_REFERER'])
+					&&
+					preg_match('#wpappninja_simul4#', $_SERVER['HTTP_REFERER'])
+				) {
+					$is_wpappninja = true;
+				}
+
+				// if WPMobile.App plugin is active and we're in the preview
+				if ($is_wpappninja && $is_correct_theme) {
+					$options = get_option('wpappninja');
+
+					if (! isset($options['wpappninja_main_theme'])) {
+						$options['wpappninja_main_theme'] = 'WPMobile.App';
+					}
+
+					if ($options['wpappninja_main_theme'] !== 'No theme') {
+						$is_correct_theme = false;
+					}
 				}
 
 				if ($is_correct_theme && $maybe_foreign_theme) {
