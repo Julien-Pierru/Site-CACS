@@ -1,8 +1,8 @@
 import { createElement, useEffect, useState, useMemo } from '@wordpress/element'
-import { Select } from 'blocksy-options'
 import { __ } from 'ct-i18n'
 
 import cachedFetch from 'ct-wordpress-helpers/cached-fetch'
+import Select from './ct-select'
 
 const withUniqueIDs = (data) =>
 	data.filter(
@@ -11,11 +11,16 @@ const withUniqueIDs = (data) =>
 	)
 
 const EntityIdPicker = ({
-	entity,
-	placeholder,
-	additionOptions = [],
 	value,
-	postType,
+	option,
+	option: {
+		entity = 'posts',
+		post_type = 'post',
+		placeholder,
+		additionOptions = [],
+	},
+	return_type = 'id',
+	purpose,
 	onChange,
 }) => {
 	const [allEntities, setAllEntities] = useState([])
@@ -23,24 +28,22 @@ const EntityIdPicker = ({
 		const requestBody = {}
 
 		if (entity === 'posts') {
-			requestBody.post_type = postType
+			requestBody.post_type = post_type
 		}
 
-		// if (entity === 'users') {}
-
 		if (entity === 'taxonomies') {
-			requestBody.post_type = postType
+			requestBody.post_type = post_type
 		}
 
 		return {
 			...requestBody,
 			...(value ? { alsoInclude: value } : {}),
 		}
-	}, [entity, postType, value])
+	}, [entity, post_type, value])
 
 	const fetchPosts = (searchQuery = '') => {
 		cachedFetch(
-			`${wp.ajax.settings.url}?action=blocksy_conditions_get_all_entities`,
+			`${wp.ajax.settings.url}?action=blocksy_get_all_entities`,
 			{
 				entity,
 
@@ -49,7 +52,9 @@ const EntityIdPicker = ({
 			},
 			{
 				// Abort intermediary requests.
-				fetcherName: `conditions-get-all-entities-picker`,
+				// TODO: maybe add a more specific name to the fetcherName to
+				// avoid clashes with other instances of the same component.
+				fetcherName: `entity-picker`,
 			}
 		)
 			.then((r) => r.json())
@@ -60,10 +65,11 @@ const EntityIdPicker = ({
 
 	useEffect(() => {
 		fetchPosts()
-	}, [entity, postType])
+	}, [entity, post_type])
 
 	return (
 		<Select
+			purpose={purpose}
 			option={{
 				appendToBody: true,
 				defaultToFirstItem: false,
@@ -83,11 +89,16 @@ const EntityIdPicker = ({
 				search: true,
 			}}
 			value={value}
-			onChange={(entity_id) =>
-				onChange(
-					allEntities.find(({ id }) => id === entity_id) || entity_id
-				)
-			}
+			onChange={(entity_id) => {
+				if (return_type === 'entity') {
+					onChange(
+						allEntities.find(({ id }) => id === entity_id) ||
+							entity_id
+					)
+				}
+
+				return onChange(entity_id)
+			}}
 			onInputValueChange={(value) => {
 				if (
 					allEntities.find(
